@@ -7,3 +7,6 @@ You can find more information on this plugin ~~and a compiled JAR download~~ __O
 
 Compiled jar is in the target folder. All you need to do is slap it in your plugins folder and run /piano play. Or, you can run the jar and connect it to the server to stream MIDI controllers directly to the server! The jar will function as the plugin and client. Run the jar, enter your server ip and name, and connect!
 If you want to stream midi from a program like FL Studio, LoopMIDI can help you accomplish that. https://www.tobias-erichsen.de/software/loopmidi.html
+
+MIDI Channel 1 is 6 octaves, divided into 3 instruments. All other channels are 2 octaves.
+MIDI Channels 2-13 are the various Minecraft instrument sounds, channel 14 is bass drum, 15 is snare, and 16 is hat.
