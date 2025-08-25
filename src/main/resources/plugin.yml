@@ -1,10 +1,11 @@
 name: BukkitPiano
-version: 1.0
+version: 2.0
 main: me.glatteis.bukkitpiano.server.ServerMain
 authors: [glatteis,avixk]
 api-version: 1.13
 commands:
   bukkitpiano:
     usage: /bukkitpiano
+    aliases: [piano]
     description: BukkitPiano main command
-    permission: piano.play
+    permission: bukkitpiano.use

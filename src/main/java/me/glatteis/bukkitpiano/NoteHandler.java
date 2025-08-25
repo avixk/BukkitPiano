@@ -1,5 +1,7 @@
 package me.glatteis.bukkitpiano;
 
+import org.bukkit.Sound;
+
 /**
  * Created by Linus on 11.01.2016.
  */
@@ -59,6 +61,41 @@ public class NoteHandler {
                 return 2.0F;//F#
         }
         return -1;
+    }
+    public static Sound getSound(int channel) {
+        switch (channel) {
+            case 2:
+                return Sound.BLOCK_NOTE_BLOCK_BELL;
+            case 3:
+                return Sound.BLOCK_NOTE_BLOCK_HARP;
+            case 4:
+                return Sound.BLOCK_NOTE_BLOCK_BASS;
+            case 5:
+                return Sound.BLOCK_NOTE_BLOCK_BIT;
+            case 6:
+                return Sound.BLOCK_NOTE_BLOCK_CHIME;
+            case 7:
+                return Sound.BLOCK_NOTE_BLOCK_GUITAR;
+            case 8:
+                return Sound.BLOCK_NOTE_BLOCK_FLUTE;
+            case 9:
+                return Sound.BLOCK_NOTE_BLOCK_BANJO;
+            case 10:
+                return Sound.BLOCK_NOTE_BLOCK_PLING;
+            case 11:
+                return Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE;
+            case 12:
+                return Sound.BLOCK_NOTE_BLOCK_XYLOPHONE;
+            case 13:
+                return Sound.BLOCK_NOTE_BLOCK_COW_BELL;
+            case 14:
+                return Sound.BLOCK_NOTE_BLOCK_BASEDRUM;
+            case 15:
+                return Sound.BLOCK_NOTE_BLOCK_SNARE;
+            case 16:
+                return Sound.BLOCK_NOTE_BLOCK_HAT;
+        }
+        return null;
     }
 
 }

@@ -8,9 +8,7 @@ import me.glatteis.bukkitpiano.QuitPacket;
 import javax.sound.midi.*;
 import java.awt.*;
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.SocketException;
+import java.net.*;
 
 /**
  * Created by Linus on 10.01.2016.
@@ -34,11 +32,21 @@ public class BukkitPianoSender implements Receiver {
         savedTimeStamp = 0;
     }
 
+    public static int port = 8138;
+
     @Override
     public void send(MidiMessage message, long timeStamp) {
         if (timeStamp == savedTimeStamp) return; //No double notes!
         byte[] byteMessage = message.getMessage();
-        if (byteMessage[0] != -112 || !isConnected | byteMessage[2] == 0) return; //We only want ON messages that are of velocities greater than zero.
+        String out = "";
+        for(byte b : byteMessage){
+            out += b + " ";
+        }
+        int status = message.getStatus();
+        out += " status:" + status + " length:" + message.getLength();
+        System.out.println(out );
+        if ((status < 144 || status > 159) || !isConnected | byteMessage[2] == 0) return; //We only want ON messages that are of velocities greater than zero.
+        int channel = status - 143; //144 is channel 1, 145 is channel 2
 
         byteMessage[1] -= (main.octave * 12) + 12;
         if (!main.velocitySensitivity) byteMessage[2] = 127;
@@ -47,10 +55,11 @@ public class BukkitPianoSender implements Receiver {
 
         notePacket.id = main.id;
         notePacket.midiData = byteMessage;
+        notePacket.channel = channel;
 
         try {
             byte[] packet = PackMethods.pack(notePacket);
-            DatagramPacket datagramPacket = new DatagramPacket(packet, packet.length, main.serverAddress, 25565);
+            DatagramPacket datagramPacket = new DatagramPacket(packet, packet.length, main.serverAddress, port);
             clientSocket.send(datagramPacket);
         } catch (IOException e) {
             e.printStackTrace();
@@ -66,7 +75,7 @@ public class BukkitPianoSender implements Receiver {
         while (true) {
             try {
                 byte[] packet= PackMethods.pack(loginPacket);
-                DatagramPacket datagramPacket = new DatagramPacket(packet, packet.length, main.serverAddress, main.port);
+                DatagramPacket datagramPacket = new DatagramPacket(packet, packet.length, main.serverAddress, port);
                 clientSocket.send(datagramPacket);
                 clientSocket.setSoTimeout(1500);
                 clientSocket.receive(datagramPacket);
@@ -102,7 +111,7 @@ public class BukkitPianoSender implements Receiver {
 
             try {
                 byte[] packet = PackMethods.pack(quitPacket);
-                DatagramPacket datagramPacket = new DatagramPacket(packet, packet.length, main.serverAddress, 25565);
+                DatagramPacket datagramPacket = new DatagramPacket(packet, packet.length, main.serverAddress, port);
                 clientSocket.send(datagramPacket);
             } catch (IOException e) {
                 e.printStackTrace();

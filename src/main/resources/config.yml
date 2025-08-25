@@ -1,0 +1,72 @@
+listen_port: 25565
+listen_address: 0.0.0.0
+
+max_notes_per_tick:
+  streaming: 30
+  midi: 50
+
+swing_hand:
+  enable: true
+  only_while_sitting: false
+
+midiPlayer:
+  songs:
+    example:
+      name: '&dExample Song - Artist'
+      file: 'example.mid'
+      octave_offset: 0
+      volume_percent: 1.0 # 1 is 100% volume, can be used to make songs quieter or louder if value is above 1
+      ignore_warnings: true # If true, the player won't get an actionbar message for skipped notes due to being out of range or too fast.
+    Mii:
+      name: 'Mii Channel Theme'
+      file: 'Mii.mid'
+    Bohemian_Rhapsody:
+      name: 'Bohemian Rhapsody - Queen'
+      file: 'Bohemian_Rhapsody-bukkitpiano_edit.mid'
+      ignore_warnings: true
+    Marble_Machine:
+      name: 'Marble Machine - Wintergatan'
+      file: 'Wintergatan-Marble_Machine-bukkitpiano_edit.mid'
+    Jeopardy:
+      name: 'Jeopardy Think'
+      file: 'Jeopardy-bukkitpiano_edit.mid'
+    Stairway_to_Heaven:
+      name: 'Stairway to Heaven - Led Zepplin'
+      file: 'Stairway_to_Heaven-bukkitpiano_edit.mid'
+    Through_the_Fire_and_Flames:
+      name: 'Through the Fire and Flames - DragonForce'
+      file: 'Through_the_Fire_and_Flames-bukkitpiano_edit.mid'
+    Toccata_and_Fugue_in_D_minor:
+      name: 'Toccata and Fugue in D minor - Bach'
+      file: 'Toccata_and_Fugue_in_D_minor-Bach-bukkitpiano_edit.mid'
+    Dummy:
+      name: 'Angry Dummy - Undertale'
+      file: 'Dummy-Undertale-bukkitpiano_edit.mid'
+    Rush_E:
+      name: 'Rush E - Sheet Music Boss'
+      file: 'rush_e-bukkitpiano_edit.mid'
+      ignore_warnings: true
+    Never_Gonna_Give_You_Up:
+      name: 'Never Gonna Give You Up - Rick Astley'
+      file: 'Never_Gonna_Give_You_Up-bukkitpiano_edit.mid'
+    Spear_of_Justice:
+      name: 'Spear of Justice - Undertale'
+      file: 'Spear_of_Justice-bukkitpiano_edit.mid'
+    Pirates_of_The_Caribbean:
+      name: 'He''s a Pirate - Pirates of The Caribbean'
+      file: 'Pirates_of_The_Caribbean-bukkitpiano_edit.mid'
+    Megalovania:
+      name: 'Megalovania - Undertale'
+      file: 'Megalovania-bukkitpiano_edit.mid'
+    Fur_Elise:
+      name: 'Für Elise - Beethoven'
+      file: 'Fur_Elise-bukkitpiano_edit.mid'
+    Sweet_Child_O_Mine:
+      name: 'Sweet Child O'' Mine - Guns N'' Roses'
+      file: 'Sweet_Child_O_Mine-bukkitpiano_edit.mid'
+    Moonlight_Sonata:
+      name: 'Moonlight Sonata, 3rd Movement - Beethoven'
+      file: 'Moonlight_Sonata-bukkitpiano_edit.mid'
+    The_Final_Countdown:
+      name: 'The Final Countdown - Europe'
+      file: 'The_Final_Countdown-bukkitpiano_edit.mid'

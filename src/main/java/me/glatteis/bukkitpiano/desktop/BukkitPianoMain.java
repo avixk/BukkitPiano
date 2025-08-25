@@ -30,7 +30,6 @@ public class BukkitPianoMain {
     private BukkitPianoSender sender;
 
     protected InetAddress serverAddress;
-    protected int port;
 
     public BukkitPianoMain() {
         sender = new BukkitPianoSender(this);
@@ -63,7 +62,7 @@ public class BukkitPianoMain {
         ipTextField.setToolTipText("Server IP");
         panel.add(ipTextField);
 
-        final JTextField portField = new JTextField("25565");
+        final JTextField portField = new JTextField(BukkitPianoSender.port + "");
         portField.setBounds(360, 100, 90, 32);
         portField.setFont(new Font("Arial", 0, 28));
         portField.setToolTipText("Port");
@@ -83,8 +82,8 @@ public class BukkitPianoMain {
             public void actionPerformed(ActionEvent e) {
                 try {
                     statusLabel.setText("Looking for host...");
-                    serverAddress = InetAddress.getByName(ipTextField.getText());
-                    port = Integer.parseInt(portField.getText());
+                    serverAddress = InetAddress.getByName(ipTextField.getText().trim());
+                    BukkitPianoSender.port = Integer.parseInt(portField.getText().trim());
                     statusLabel.setText("Found host " + serverAddress.toString());
                 } catch (UnknownHostException e1) {
                     //
@@ -92,7 +91,7 @@ public class BukkitPianoMain {
                     statusLabel.setText("This does not seem to be a valid port.");
                 }
                 connectButton.setBackground(Color.GREEN);
-                sender.sendConnect(playerTextField.getText());
+                sender.sendConnect(playerTextField.getText().trim());
             }
         });
         panel.add(connectButton);

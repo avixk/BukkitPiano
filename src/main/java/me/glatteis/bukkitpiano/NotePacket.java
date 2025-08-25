@@ -9,5 +9,6 @@ public class NotePacket implements Serializable {
 
     public byte[] midiData;
     public long id;
+    public int channel;
 
 }
