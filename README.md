@@ -5,4 +5,5 @@ This was originally written by Linus(glatteis). All I did was added particles an
 
 You can find more information on this plugin ~~and a compiled JAR download~~ __OUTDATED__ on Spigot: https://www.spigotmc.org/threads/bukkitpiano.115115/
 
-I'll upload a compiled jar soon. Stay tuned.
+Compiled jar is in the target folder. The jar will function as the plugin and client. Run the jar, enter your server ip and name, and connect!
+If you want to stream midi from a program like FL Studio, LoopMIDI can help you accomplish that. https://www.tobias-erichsen.de/software/loopmidi.html
