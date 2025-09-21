@@ -20,7 +20,7 @@ import java.util.Arrays;
 public class MusicalStuff {
     public static void playNote(Player player, byte[] midiData, int channel, boolean ignoreWarnings) {
         byte note = midiData[1];//note 6 is lowest, 78 is highest
-        note = (byte) (note - 12); //subtract 1 octave because it always seems low
+        note = (byte) (note - 12); //subtract 1 octave because it always seems high
         int bukkitNote = note - 6; // bukkit note 0 is lowest, bukkit note 72 highest
         float velocity = midiData[2] / 127F;
 
@@ -110,7 +110,7 @@ public class MusicalStuff {
                 player.getWorld().spawnParticle(Particle.NOTE, finalNoteLocation,0,1,0,0, color);
 
                 for(Player listener : player.getWorld().getPlayersSeeingChunk(player.getLocation().getChunk())){
-                    if(!Storage.isMuted(listener.getUniqueId()))
+                    if(!Storage.isMuted(listener.getUniqueId()) && listener.canSee(player))
                         listener.playSound(player.getEyeLocation().add(0,1,0), sound, velocity, pitch);
                 }
             }

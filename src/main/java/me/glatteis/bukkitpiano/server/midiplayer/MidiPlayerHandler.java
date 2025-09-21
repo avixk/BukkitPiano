@@ -3,10 +3,12 @@ package me.glatteis.bukkitpiano.server.midiplayer;
 import me.glatteis.bukkitpiano.server.ServerMain;
 import me.glatteis.bukkitpiano.server.Util;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
+import org.bukkit.persistence.PersistentDataType;
 
 import javax.sound.midi.*;
 import java.io.File;
@@ -22,6 +24,7 @@ public class MidiPlayerHandler {
 
 
     public static void init(){
+        if(bukkitpianoKey == null) bukkitpianoKey = new NamespacedKey(ServerMain.plugin,"BukkitPiano.state");
         if(!new File(ServerMain.plugin.getDataFolder() + "/midi").exists()){
             String[] default_songs = {
                     "Mii.mid",
@@ -82,9 +85,16 @@ public class MidiPlayerHandler {
             if(Bukkit.getPluginManager().getPermission("bukkitpiano.midi." + songName) == null)
                 Bukkit.getPluginManager().addPermission(new Permission("bukkitpiano.midi." + songName, PermissionDefault.NOT_OP));
         }
+        for(Player p : Bukkit.getOnlinePlayers()){
+            if(!p.getPersistentDataContainer().has(bukkitpianoKey))continue;
+            String str = p.getPersistentDataContainer().get(bukkitpianoKey, PersistentDataType.STRING);
+            p.getPersistentDataContainer().remove(bukkitpianoKey);
+            if(str == null || str.isEmpty())continue;
+            MidiPlayer midiPlayer = getOrCreateSession(p);
+            midiPlayer.returnToStateFromString(str);
+        }
     }
     public static MidiSequence load(File file, Song song) {
-        ServerMain.plugin.getLogger().info("Loading MIDI file " + file.getName());
         long start = System.currentTimeMillis();
         try {
             Sequence sequence = MidiSystem.getSequence(file);
@@ -143,11 +153,11 @@ public class MidiPlayerHandler {
                     // https://mido.readthedocs.io/en/latest/meta_message_types.html
                 }
             }
-            ServerMain.plugin.getLogger().info("Took " + (System.currentTimeMillis() - start) + " ms.");
+            ServerMain.plugin.getLogger().info("Took " + (System.currentTimeMillis() - start) + " ms to load " + file.getName());
             return new MidiSequence(events, song);
         } catch (Exception e) {
             e.printStackTrace();
-            ServerMain.plugin.getLogger().info("Took " + (System.currentTimeMillis() - start) + " ms.");
+            ServerMain.plugin.getLogger().info("Took " + (System.currentTimeMillis() - start) + " ms to load " + file.getName());
             ServerMain.plugin.getLogger().info("Failed to load MIDI file " + file.getName());
             return null;
         }
@@ -317,8 +327,11 @@ public class MidiPlayerHandler {
         }
         return output.toString();
     }
+    public static NamespacedKey bukkitpianoKey;
     public static void cleanup(){
         for(Map.Entry<UUID, MidiPlayer> session : sessions.entrySet()){
+            session.getValue().playingplayer.getPersistentDataContainer().remove(bukkitpianoKey);
+            session.getValue().playingplayer.getPersistentDataContainer().set(bukkitpianoKey, PersistentDataType.STRING,session.getValue().stateToString());
             session.getValue().stop();
         }
     }

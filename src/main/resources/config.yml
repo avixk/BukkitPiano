@@ -10,12 +10,14 @@ swing_hand:
   only_while_sitting: false
 
 midiPlayer:
+  after_song_delay: 40 # in ticks
+  max_songs_in_queue: 10
   songs:
     example:
       name: '&dExample Song - Artist'
       file: 'example.mid'
       octave_offset: 0
-      volume_percent: 1.0 # 1 is 100% volume, can be used to make songs quieter or louder if value is above 1
+      volume_percent: 1.0 # 1 is 100% volume, can be used to make songs quieter, or louder if value is above 1
       ignore_warnings: true # If true, the player won't get an actionbar message for skipped notes due to being out of range or too fast.
     Mii:
       name: 'Mii Channel Theme'

@@ -165,7 +165,54 @@ public class ServerMain extends JavaPlugin implements Listener {
                 Storage.setMuted(p.getUniqueId(), false);
                 midiPlayer.playMidiFile(song);
                 sender.sendMessage("§aPlaying §e" + midiPlayer.getSequence().getSong().getFormattedName() + "§a...");
-
+                return true;
+            }else if (args[0].equals("queue")) {
+                MidiPlayer midiPlayer = MidiPlayerHandler.getOrCreateSession(p);
+                if(args.length == 1){
+                    if(midiPlayer.getSongQueue().isEmpty()){
+                        if(midiPlayer.getCurrentSong() == null){
+                            sender.sendMessage("§aYou don't have anything playing and your queue is empty.");
+                        }else{
+                            sender.sendMessage("§aNow Playing: §b" + midiPlayer.getCurrentSong().getFormattedName() + "\n§aYour queue is empty.");
+                        }
+                    }else{
+                        String out = "";
+                        for(String songname : midiPlayer.getSongQueue()){
+                            Song song = MidiPlayerHandler.getSong(songname);
+                            if(song != null) out += "\n§a- §e" + song.getFormattedName();
+                        }
+                        if(midiPlayer.getCurrentSong() == null){
+                            sender.sendMessage("§aYou don't have anything playing currently. Type §e/piano resume §ato begin.\n§aUp Next: " + out);
+                        }else{
+                            sender.sendMessage("§aNow Playing: §b" + midiPlayer.getCurrentSong().getFormattedName() + "\n§aUp Next: " + out);
+                        }
+                    }
+                    /*String songs = "";
+                    for(String songString : MidiPlayerHandler.getAvailableSongs(sender)){
+                        if(!songs.isEmpty())
+                            songs += ", ";
+                        songs += songString;
+                    }
+                    sender.sendMessage("§7Your available songs: §8" + songs);*/
+                    return true;
+                }
+                String songName = args[1];
+                if(MidiPlayerHandler.getSong(songName) == null || !p.hasPermission("bukkitpiano.midi." + songName)){
+                    String songs = "";
+                    for(String songString : MidiPlayerHandler.getAvailableSongs(sender)){
+                        if(!songs.isEmpty())
+                            songs += ", ";
+                        songs += songString;
+                    }
+                    if(!p.hasPermission("bukkitpiano.midi." + songName))
+                        sender.sendMessage("§cYou don't have access to this song. Your available songs: §e" + songs);
+                    else sender.sendMessage("§cSong not found. Your available songs: §e" + songs);
+                    return true;
+                }
+                Song song = MidiPlayerHandler.getSong(songName);
+                midiPlayer.queueSong(song.getName());
+                if(midiPlayer.isPlaying()) sender.sendMessage("§aAdded §e" + song.getFormattedName() + " §ato the queue.");
+                else sender.sendMessage("§aAdded §e" + song.getFormattedName() + " §ato the queue. Type §e/piano resume§a to begin.");
                 return true;
             }else if (args[0].equals("pause")) {
                 MidiPlayer midiPlayer = MidiPlayerHandler.getSession(p.getUniqueId());
@@ -177,17 +224,40 @@ public class ServerMain extends JavaPlugin implements Listener {
                 //p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText());
                 sender.sendMessage("§ePaused track...");
                 return true;
+            }else if (args[0].equals("skip")) {
+                MidiPlayer midiPlayer = MidiPlayerHandler.getSession(p.getUniqueId());
+                if(midiPlayer == null || !midiPlayer.isPlaying()){
+                    sender.sendMessage("§cYou don't have anything playing!");
+                    return true;
+                }
+                midiPlayer.advanceSong();
+                //p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText());
+                sender.sendMessage("§eSkipping track...");
+                return true;
             }else if (args[0].equals("resume")) {
                 MidiPlayer midiPlayer = MidiPlayerHandler.getSession(p.getUniqueId());
                 if(midiPlayer == null){
                     sender.sendMessage("§cYou don't have anything playing!");
                     return true;
                 }
-                if(midiPlayer.getSequence() != null){
-                    Storage.setMuted(p.getUniqueId(), false);
-                    sender.sendMessage("§aResuming §e" + midiPlayer.getSequence().getSong().getFormattedName() + "§a...");
-                    midiPlayer.resume();
+                if(midiPlayer.isPlaying()){
+                    sender.sendMessage("§cYou're already playing " + midiPlayer.getCurrentSong().getFormattedName() + "§c!");
                     return true;
+                }
+                if(midiPlayer.getCurrentSong() != null){
+                    sender.sendMessage("§aResuming §e" + midiPlayer.getCurrentSong().getFormattedName() + "§a...");
+                    midiPlayer.resume();
+                    Storage.setMuted(p.getUniqueId(), false);
+                    return true;
+                }else {
+                    midiPlayer.advanceSong();
+                    if(midiPlayer.getCurrentSong() == null){
+                        sender.sendMessage("§cThis cannot be played.");
+                        return true;
+                    }
+                    sender.sendMessage("§aResuming §e" + midiPlayer.getCurrentSong().getFormattedName() + "§a...");
+                    midiPlayer.resume();
+                    Storage.setMuted(p.getUniqueId(), false);
                 }
                 return true;
             }else if (args[0].equals("dump")) {
@@ -241,7 +311,7 @@ public class ServerMain extends JavaPlugin implements Listener {
         }
     }
 
-    private static final List<String> COMMANDS = List.of(new String[]{"link","mute","play","pause","resume"});
+    private static final List<String> COMMANDS = List.of(new String[]{"link","mute","play","pause","resume","queue","skip"});
     private static final List<String> ADMIN_COMMANDS = List.of(new String[]{"reload","debug"});
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onTabCompleteHigh(TabCompleteEvent e){
@@ -261,7 +331,7 @@ public class ServerMain extends JavaPlugin implements Listener {
                 e.setCompletions(completions);
                 return;
             }
-            if(buf[1].equalsIgnoreCase("play")){
+            if(buf[1].equalsIgnoreCase("play") || buf[1].equalsIgnoreCase("queue")){
                 if(length == 3){
                     List<String> completions = new ArrayList<>();
                     StringUtil.copyPartialMatches(relevant,MidiPlayerHandler.getAvailableSongs(e.getSender()),completions);
